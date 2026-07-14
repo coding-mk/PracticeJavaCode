@@ -48,71 +48,73 @@ No more overlapping intervals present.
 package Arrays;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 public class MergeOverlappingIntervals {
 
-public class Interval {
-     int start;
-     int end;
-     Interval() { start = 0; end = 0; }
-    Interval(int s, int e) { start = s; end = e; }
- }
+    public static class Interval {
+        int start;
+        int end;
 
-  public static void main(String[] args) {
-    
-  }
+        Interval() {
+            start = 0;
+            end = 0;
+        }
 
-  public ArrayList<Interval> merge(ArrayList<Interval> intervals) {
-        Collections.sort(intervals, new IntervalComp());
-        ArrayList<Interval> res;
-        Interval inter;
-        int n = intervals.size();
-        res = new ArrayList<>();
-        
-        for (int i = 0; i < n;) {
-            
-            inter = new Interval(intervals.get(i).start, intervals.get(i).end);
-            Interval next;
-            i++;
-            
-            while (i < n) {
-                next = intervals.get(i);
-                if (overlap(inter, next)) {
-                    inter.end = Math.max(inter.end, next.end);
-                    i++;
-                } else {
-                    break;
-                }
+        Interval(int s, int e) {
+            start = s;
+            end = e;
+        }
+    }
+
+    public static void main(String[] args) {
+
+        ArrayList<Interval> intervals = new ArrayList<>();
+
+        intervals.add(new Interval(1, 3));
+        intervals.add(new Interval(2, 6));
+        intervals.add(new Interval(8, 10));
+        intervals.add(new Interval(15, 18));
+
+        ArrayList<Interval> ans = merge(intervals);
+
+        for (Interval i : ans) {
+            System.out.println("Start: " + i.start + " End: " + i.end);
+        }
+    }
+
+    public static ArrayList<Interval> merge(ArrayList<Interval> intervals) {
+
+        if (intervals == null || intervals.size() <= 1) {
+            return intervals;
+        }
+
+        // Sort intervals based on start time
+        intervals.sort((a, b) -> Integer.compare(a.start, b.start));
+
+        ArrayList<Interval> result = new ArrayList<>();
+
+        Interval current = new Interval(intervals.get(0).start,
+                                        intervals.get(0).end);
+
+        for (int i = 1; i < intervals.size(); i++) {
+
+            Interval next = intervals.get(i);
+
+            // Overlapping intervals
+            if (current.end >= next.start) {
+                current.end = Math.max(current.end, next.end);
             }
-            
-            res.add(inter);
-            
+            // Non-overlapping interval
+            else {
+                result.add(current);
+                current = new Interval(next.start, next.end);
+            }
         }
-        
-        return res;
-    }
-    
-    private boolean overlap(Interval int1, Interval int2) {
-        
-        if (int1.end >= int2.start && int1.start <= int2.end)
-            return true;
-            
-        return false;
-        
-    }
-    
-    private class IntervalComp implements Comparator<Interval> {
-        
-        @Override
-        public int compare(Interval interval1, Interval interval2) {
-            int cmp =  Integer.compare(interval1.start, interval2.start);
-            if (cmp != 0)
-                return cmp;
-            cmp = Integer.compare(interval1.end, interval2.end);
-            return cmp;
-        }
-        
+
+        // Add the last interval
+        result.add(current);
+
+        return result;
     }
 }
