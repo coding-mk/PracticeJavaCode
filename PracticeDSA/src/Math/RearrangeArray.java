@@ -38,6 +38,7 @@ public class RearrangeArray {
     for (int i = 0; i < A.size(); i++) {
       System.out.print(A.get(i) + " ");
     }
+    System.out.println("");
     ArrayList<Integer> B = new ArrayList<>(){
       {
         add(0);
